@@ -102,6 +102,20 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 				<TextView
+					android:text="(super)Vooc快充："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/voocstat"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
 					android:text="电池健康状况："
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content" />

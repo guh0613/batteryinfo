@@ -12,6 +12,7 @@ import android.*;
 import android.content.pm.*;
 import android.content.*;
 import android.support.v4.app.*;
+import java.math.*;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -148,7 +149,12 @@ public class MainActivity extends AppCompatActivity
 		ShellUtils.CommandResult cmd = ShellUtils.execCommand(getbatt,true,true);
 		if (cmd.result == 0)
 		{
-			battfcc.setText(cmd.successMsg + ".0");
+			double battccdou = Double.parseDouble((BatteryInfo.getBatteryCapacity(this)));
+			int battfccint = Integer.parseInt(cmd.successMsg);
+			BigDecimal battccdem = new BigDecimal(battccdou);
+			BigDecimal battfccdem = new BigDecimal(battfccint);
+			String healthrate = SystemUtil.CalculateUtil(battfccdem,battccdem);
+			battfcc.setText(cmd.successMsg + ".0" + "（" + healthrate + "）");
 		}
 		else
 	    {
@@ -167,7 +173,7 @@ public class MainActivity extends AppCompatActivity
 			}
 			else
 			{
-				batthealth.setText(cmdstate.successMsg);
+				batthealth.setText("状态异常(过热，损坏等，请及时检修)");
 			}
 		}
 		else
@@ -198,7 +204,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			chargetp.setText("读取失败，请向开发者咨询");
+			chargetp.setText("读取失败");
 		}
 		
 		//当前电压
@@ -211,7 +217,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			voltp.setText("读取失败，请向开发者咨询");
+			voltp.setText("读取失败");
 		}
 		
 		//最高电压
@@ -224,7 +230,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			voltma.setText("读取失败，请向开发者咨询");
+			voltma.setText("读取失败");
 		}
 		
 		//最低电压
@@ -237,7 +243,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			voltmi.setText("读取失败，请向开发者咨询");
+			voltmi.setText("读取失败");
 		}
 		
 		//充电状态
@@ -257,7 +263,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			charstat.setText("读取失败，请向开发者咨询");
+			charstat.setText("读取失败");
 		}
 		
 		//适配器固件更新
@@ -277,7 +283,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			adapter.setText("读取失败，请向开发者咨询");
+			adapter.setText("读取失败,您的充电头可能未适配");
 		}
 		
 		//是否支持阶梯式充电
@@ -297,7 +303,27 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			stepchar.setText("读取失败，请向开发者咨询");
+			stepchar.setText("读取失败");
+		}
+		
+		//vooc识别
+		TextView vooctext = findViewById(R.id.voocstat);
+		String vooc = "cat /sys/class/power_supply/battery/voocchg_ing";
+		ShellUtils.CommandResult cmdvooc = ShellUtils.execCommand(vooc,true,true);
+		if (cmdvooc.result == 0 )
+		{
+			if (cmdvooc.successMsg.equals("0"))
+			{
+				vooctext.setText("未激活或不在充电");
+			}
+			else if(cmdvooc.successMsg.equals("1"))
+			{
+				vooctext.setText("已激活vooc快充");
+			}
+		}
+		else
+		{
+			vooctext.setText("读取失败");
 		}
 	}
 }

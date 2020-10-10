@@ -4,6 +4,7 @@ import android.telephony.*;
 import android.content.*;
 import android.app.*;
 import java.io.*;
+import java.math.*;
 
 /**
  * 系统工具类
@@ -89,5 +90,23 @@ public class SystemUtil {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	
+		/**
+		 * @param a 单数  32
+		 * @param b 总数  145
+		 * a / b    计算百分比32/145
+		 * @return 22.07%
+		 */
+		public  static String CalculateUtil(BigDecimal a, BigDecimal b){
+			String percent =
+                b == null ? "-" :
+				b.compareTo(new BigDecimal(0)) == 0 ? "-":
+				a == null ? "0.00%" :
+				a.multiply(new BigDecimal(100)).divide(b,2,BigDecimal.ROUND_HALF_UP) + "%";
+			return percent;
+		}
+
+	
 }
 
