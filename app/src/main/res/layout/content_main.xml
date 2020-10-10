@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center">
+
+	<android.support.v7.widget.CardView
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/cardwelcome"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:cardCornerRadius="9dp"
+		app:contentPadding="5dp"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		android:layout_margin="5dp"
+		app:cardUseCompatPadding="true">
+
+		<TextView
+			android:id="@+id/welcome"
+			android:layout_gravity="center"
+			android:text="欢迎使用电池信息查询！请点击“刷新”按钮继续。"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:textStyle="bold"/>
+
+	</android.support.v7.widget.CardView>
+	<android.support.v7.widget.CardView
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/cardbattinfo"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:cardCornerRadius="9dp"
+		app:contentPadding="15dp"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		android:layout_margin="5dp"
+		app:cardUseCompatPadding="true">
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+              <TextView
+				  android:text="手机型号："
+				  android:layout_height="wrap_content"
+				  android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/phoneinfo"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="能量来源："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/energy"
+					android:text="电池"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="电源技术："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/batttech"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="充电状态："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/charstatus"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="电池健康状况："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/battstate"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="充电类型："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/chargetype"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="当前电池电压(uv)："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/voltnow"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="最高电池电压(uv)："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/voltmax"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="最低电池电压(uv)："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/voltmin"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="电池设计容量(mah)："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/battcc"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="计算得出的实际容量(mah)："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/battfcc"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="电源适配器固件更新："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/adapter"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="是否支持阶梯式充电："
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content" />
+				<TextView
+					android:id="@+id/step"
+					android:text=" "
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"/>
+			</LinearLayout>
+		</LinearLayout>
+	</android.support.v7.widget.CardView>
+	
+	<android.support.v7.widget.CardView
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/cardhelp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:cardCornerRadius="9dp"
+		app:contentPadding="15dp"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		android:layout_margin="5dp"
+		app:cardUseCompatPadding="true">
+
+		<TextView
+			android:layout_gravity="center"
+			android:text="工作原理：\n通过读取oppo内置在内核的电池信息计算器计算得出。由于运算在内核进行，因此无需保留本app的后台，也可查询数据。每次刷写内核后，这些数据将会被重置。这些数据会在每一次充电完成后计算得出，所以请在充电完成后使用本app以获得最新数据。"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"/>
+
+	</android.support.v7.widget.CardView>
+	
+	<android.support.v7.widget.CardView
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/cardrefresh"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:cardCornerRadius="9dp"
+		android:layout_margin="3dp"
+		app:cardUseCompatPadding="true"
+		app:contentPadding="25dp"
+		app:cardBackgroundColor="@color/cardback1"
+		android:clickable="true"
+		android:foreground="?android:attr/selectableItemBackground"
+		android:onClick="refresh">
+
+		<TextView
+			android:layout_gravity="center"
+			android:text="刷新电池信息"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:textStyle="bold"/>
+
+	</android.support.v7.widget.CardView>
+
+</LinearLayout>
+
