@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity
 		ShellUtils.CommandResult cmdvolt1 = ShellUtils.execCommand(volt1,true,true);
 		if (cmdvolt1.result == 0 )
 		{
-			voltp.setText(cmdvolt1.successMsg);
+			voltp.setText(cmdvolt1.successMsg + "uV");
 		}
 		else
 		{
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity
 		ShellUtils.CommandResult cmdvolt2 = ShellUtils.execCommand(volt2,true,true);
 		if (cmdvolt2.result == 0 )
 		{
-			voltma.setText(cmdvolt2.successMsg);
+			voltma.setText(cmdvolt2.successMsg + "uV");
 		}
 		else
 		{
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity
 		ShellUtils.CommandResult cmdvolt3 = ShellUtils.execCommand(volt3,true,true);
 		if (cmdvolt3.result == 0 )
 		{
-			voltmi.setText(cmdvolt3.successMsg);
+			voltmi.setText(cmdvolt3.successMsg + "uV");
 		}
 		else
 		{
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity
 		}
 		else
 		{
-			adapter.setText("读取失败,您的充电头可能未适配");
+			adapter.setText("未知");
 		}
 		
 		//是否支持阶梯式充电
@@ -324,6 +324,72 @@ public class MainActivity extends AppCompatActivity
 		else
 		{
 			vooctext.setText("读取失败");
+		}
+		
+		//当前电流
+		TextView currentnowview = findViewById(R.id.currentnow);
+		String currenttext = "cat /sys/class/power_supply/battery/current_now";
+		ShellUtils.CommandResult cmdcurrentnow = ShellUtils.execCommand(currenttext,true,true);
+		if (cmdcurrentnow.result == 0)
+		{
+		if (Integer.parseInt(cmdcurrentnow.successMsg) > 0 )
+		{
+			
+			
+				currentnowview.setText("放电，" + cmdcurrentnow.successMsg + "mA");
+			}
+			
+			else if(Integer.parseInt(cmdcurrentnow.successMsg) < 0 )
+			{
+				int current = Integer.parseInt(cmdcurrentnow.successMsg);
+				current = current * -1 ;
+				String currentstr = Integer.toString(current);
+				currentnowview.setText("充电，" + current + "mA");
+			}
+		}
+		else
+		{
+			currentnowview.setText("未知");
+		}
+		
+		//充电器电压
+		TextView voltadapview = findViewById(R.id.voltadapnow);
+		String voltadapnow = "cat /sys/class/power_supply/usb/voltage_now";
+		ShellUtils.CommandResult cmdadapvolt = ShellUtils.execCommand(voltadapnow,true,true);
+		if (cmdadapvolt.result == 0 )
+		{
+			if (cmdadapvolt.successMsg.equals("0"))
+			{
+				voltadapview.setText("没有连接充电器");
+			}
+			else 
+			{
+				voltadapview.setText(cmdadapvolt.successMsg + "uV");
+			}
+		}
+		else
+		{
+			voltadapview.setText("读取失败");
+		}
+		
+		//充电功率
+		TextView powernowview = findViewById(R.id.powernow);
+		//判断充电状态
+		if (cmdadapvolt.successMsg.equals("0"))
+		{
+			powernowview.setText("当前不在充电");
+		}
+		else
+	    {
+			//处理电压数据
+			Double voltnow = Double.parseDouble(cmdadapvolt.successMsg);
+			int volt = (int) Math.ceil(voltnow/1000000);
+			//处理电流数据
+			Double currentnow =  Double.parseDouble(cmdcurrentnow.successMsg);
+			int current = (int) Math.floor(currentnow/1000);
+			//获得功率
+			int power = volt * current * -1;
+			powernowview.setText(power + "W" );
 		}
 	}
 }
