@@ -13,6 +13,7 @@ import android.content.pm.*;
 import android.content.*;
 import android.support.v4.app.*;
 import java.math.*;
+import java.util.*;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity
 			});
 		dialog1.show();
 		}
+		
+	   	
     }
 	//重写菜单初始化方法
 	@Override
@@ -125,24 +128,33 @@ public class MainActivity extends AppCompatActivity
         } else {
             return super.onOptionsItemSelected(item);
         }
+		
     }
 
 	//刷新电池信息方法
 	public void refresh(View view)
 	{
+		TextView refreshview = findViewById(R.id.textfresh);
+		refreshview.setText("手动刷新电池信息(慢)");
+		refreshrate();
+		mHandler.postDelayed(runnable, 1000);
+		
+	}
+	public void refreshrate()
+	{
 		//更改标题
 		TextView welcome = findViewById(R.id.welcome);
 		welcome.setText("您的设备的最新电池数据计算结果如下，仅供参考。");
-		
+
 		//手机型号
 		TextView phoneinfo = findViewById(R.id.phoneinfo);
 		//返回 厂商+型号（部分厂商的手机型号不包含品牌，所以要获得品牌名）
 		phoneinfo.setText(SystemUtil.getDeviceBrand() + " " + SystemUtil.getSystemModel());
-		
+
 		//电池设计容量
 		TextView battcc =findViewById(R.id.battcc);
 		battcc.setText(BatteryInfo.getBatteryCapacity(this));
-		
+
 		//电池实际容量
 		TextView battfcc = findViewById(R.id.battfcc);
 		String getbatt = "cat /sys/class/power_supply/battery/batt_fcc";
@@ -160,7 +172,7 @@ public class MainActivity extends AppCompatActivity
 	    {
 			battfcc.setText("读取失败");
 		}
-		
+
 		//电池健康状况
 		TextView batthealth = findViewById(R.id.battstate);
 		String battstate = "cat /sys/class/power_supply/battery/health";
@@ -169,7 +181,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			if (cmdstate.successMsg.equals("Good"))
 			{
-			batthealth.setText("良好");
+				batthealth.setText("良好");
 			}
 			else
 			{
@@ -180,7 +192,7 @@ public class MainActivity extends AppCompatActivity
 	    {
 			battfcc.setText("读取失败");
 		}
-		
+
 		//电池技术
 		TextView batttech = findViewById(R.id.batttech);
 		String batttechnology = "cat /sys/class/power_supply/battery/technology";
@@ -193,7 +205,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			batttech.setText("读取失败");
 		}
-		
+
 		//充电类型
 		TextView chargetp = findViewById(R.id.chargetype);
 		String chargetyp = "cat /sys/class/power_supply/battery/charge_type";
@@ -206,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			chargetp.setText("读取失败");
 		}
-		
+
 		//当前电压
 	    TextView voltp = findViewById(R.id.voltnow);
 		String volt1 = "cat /sys/class/power_supply/battery/voltage_now";
@@ -219,7 +231,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			voltp.setText("读取失败");
 		}
-		
+
 		//最高电压
 		TextView voltma = findViewById(R.id.voltmax);
 		String volt2 = "cat /sys/class/power_supply/battery/voltage_max";
@@ -232,7 +244,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			voltma.setText("读取失败");
 		}
-		
+
 		//最低电压
 		TextView voltmi = findViewById(R.id.voltmin);
 		String volt3 = "cat /sys/class/power_supply/battery/voltage_min";
@@ -245,7 +257,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			voltmi.setText("读取失败");
 		}
-		
+
 		//充电状态
 		TextView charstat =findViewById(R.id.charstatus);
 		String charge = "cat /sys/class/power_supply/battery/status";
@@ -254,7 +266,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			if (cmdchar.successMsg.equals("Not charging"))
 			{
-			charstat.setText("不在充电");
+				charstat.setText("不在充电");
 			}
 			else if(cmdchar.successMsg.equals("Charging"))
 			{
@@ -265,7 +277,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			charstat.setText("读取失败");
 		}
-		
+
 		//适配器固件更新
 		TextView adapter = findViewById(R.id.adapter);
 		String adapt = "cat /sys/class/power_supply/battery/adapter_fw_update";
@@ -285,7 +297,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			adapter.setText("未知");
 		}
-		
+
 		//是否支持阶梯式充电
 		TextView stepchar = findViewById(R.id.step);
 		String step = "cat /sys/class/power_supply/battery/step_charging_enabled";
@@ -305,7 +317,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			stepchar.setText("读取失败");
 		}
-		
+
 		//vooc识别
 		TextView vooctext = findViewById(R.id.voocstat);
 		String vooc = "cat /sys/class/power_supply/battery/voocchg_ing";
@@ -325,33 +337,33 @@ public class MainActivity extends AppCompatActivity
 		{
 			vooctext.setText("读取失败");
 		}
-		
+
 		//当前电流
 		TextView currentnowview = findViewById(R.id.currentnow);
 		String currenttext = "cat /sys/class/power_supply/battery/current_now";
 		ShellUtils.CommandResult cmdcurrentnow = ShellUtils.execCommand(currenttext,true,true);
 		if (cmdcurrentnow.result == 0)
 		{
-		if (Integer.parseInt(cmdcurrentnow.successMsg) > 0 )
-		{
-			
-			
+			if (Integer.parseInt(cmdcurrentnow.successMsg) > 0 )
+			{
+
+
 				currentnowview.setText("放电，" + cmdcurrentnow.successMsg + "mA");
 			}
-			
+
 			else if(Integer.parseInt(cmdcurrentnow.successMsg) < 0 )
 			{
 				int current = Integer.parseInt(cmdcurrentnow.successMsg);
 				current = current * -1 ;
 				String currentstr = Integer.toString(current);
-				currentnowview.setText("充电，" + current + "mA");
+				currentnowview.setText("充电，" + currentstr + "mA");
 			}
 		}
 		else
 		{
 			currentnowview.setText("未知");
 		}
-		
+
 		//充电器电压
 		TextView voltadapview = findViewById(R.id.voltadapnow);
 		String voltadapnow = "cat /sys/class/power_supply/usb/voltage_now";
@@ -371,7 +383,7 @@ public class MainActivity extends AppCompatActivity
 		{
 			voltadapview.setText("读取失败");
 		}
-		
+
 		//充电功率
 		TextView powernowview = findViewById(R.id.powernow);
 		//判断充电状态
@@ -392,4 +404,14 @@ public class MainActivity extends AppCompatActivity
 			powernowview.setText(power + "W" );
 		}
 	}
+	//每秒刷新
+	private Handler mHandler = new Handler();
+	Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            //要做的事情
+			refreshrate();
+            mHandler.postDelayed(this, 1000);
+        }
+    };
 }

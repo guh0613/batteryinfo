@@ -106,7 +106,7 @@ public class SystemUtil {
 				a.multiply(new BigDecimal(100)).divide(b,2,BigDecimal.ROUND_HALF_UP) + "%";
 			return percent;
 		}
-
+    
 	
 }
 

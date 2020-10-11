@@ -19,7 +19,7 @@
 		<TextView
 			android:id="@+id/welcome"
 			android:layout_gravity="center"
-			android:text="欢迎使用电池信息查询！请点击“刷新”按钮继续。"
+			android:text="欢迎使用电池信息查询！请点击“开始”按钮继续。"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:textStyle="bold"/>
@@ -142,7 +142,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 				<TextView
-					android:text="当前电池电压(uv)："
+					android:text="当前电池电压："
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content" />
 				<TextView
@@ -314,7 +314,8 @@
 
 		<TextView
 			android:layout_gravity="center"
-			android:text="刷新电池信息"
+			android:id="@+id/textfresh"
+			android:text="开始"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
