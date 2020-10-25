@@ -134,9 +134,6 @@ class ShellUtils private constructor() {
                 process = Runtime.getRuntime().exec(if (isRoot) COMMAND_SU else COMMAND_SH)
                 os = DataOutputStream(process.outputStream)
                 for (command in commands) {
-                    if (command == null) {
-                        continue
-                    }
 
                     // donnot use os.writeBytes(commmand), avoid chinese charset error
                     os.write(command.toByteArray())

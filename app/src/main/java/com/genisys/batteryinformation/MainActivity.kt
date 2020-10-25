@@ -1,6 +1,7 @@
 package com.genisys.batteryinformation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -128,6 +129,8 @@ class MainActivity : AppCompatActivity() {
 
     //每秒刷新
     private val mHandler = Handler()
+
+    @SuppressLint("SetTextI18n")
     fun refreshrate() {
         //更改标题
         val welcome = findViewById<TextView>(R.id.welcome)
