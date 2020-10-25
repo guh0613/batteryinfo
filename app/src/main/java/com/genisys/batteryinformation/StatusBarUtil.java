@@ -1,22 +1,31 @@
-package com.genisys.batteryinfo;
+package com.genisys.batteryinformation;
 
-import android.support.annotation.*;
-import java.lang.annotation.*;
-import android.app.*;
-import android.os.*;
-import android.view.*;
-import android.annotation.*;
-import android.graphics.*;
-import java.lang.reflect.*;
-import android.content.*;
-import com.readystatesoftware.systembartint.*;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+
+import androidx.annotation.IntDef;
+
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class StatusBarUtil {
     public final static int TYPE_MIUI = 0;
     public final static int TYPE_FLYME = 1;
     public final static int TYPE_M = 3;//6.0
 
-    @IntDef({TYPE_MIUI,
+     @IntDef({TYPE_MIUI,
             TYPE_FLYME,
             TYPE_M})
     @Retention(RetentionPolicy.SOURCE)

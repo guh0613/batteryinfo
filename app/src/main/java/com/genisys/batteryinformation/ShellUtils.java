@@ -1,4 +1,4 @@
-package com.genisys.batteryinfo;
+package com.genisys.batteryinformation;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

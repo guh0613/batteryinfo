@@ -1,10 +1,14 @@
-package com.genisys.batteryinfo;
-import java.util.*;
-import android.telephony.*;
-import android.content.*;
-import android.app.*;
-import java.io.*;
-import java.math.*;
+package com.genisys.batteryinformation;
+
+import android.app.Activity;
+import android.content.Context;
+import android.telephony.TelephonyManager;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * 系统工具类

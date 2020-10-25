@@ -1,31 +1,76 @@
-package com.genisys.batteryinfo;
+package com.genisys.batteryinformation;
 
-import android.app.*;
-import android.os.*;
-import android.support.v7.app.*;
-import android.support.v7.widget.*;
-import com.readystatesoftware.systembartint.*;
-import android.view.*;
-import android.widget.*;
-import android.support.v4.content.*;
-import android.*;
-import android.content.pm.*;
-import android.content.*;
-import android.support.v4.app.*;
-import java.math.*;
-import java.util.*;
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.pgyersdk.crash.PgyCrashManager;
+
+import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity
 {
-	
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+	public static boolean useroot = false;
+	Runnable runnable = new Runnable() {
+		@Override
+		public void run() {
+			//要做的事情
+			refreshrate();
+			mHandler.postDelayed(this, 1000);
+		}
+	};
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		PgyCrashManager.register(); //注册日志接口
+		//询问获取日志的资格
+		SharedPreferences sp=this.getPreferences(MODE_PRIVATE);
+		int havereadlogs =sp.getInt("havereadlogs",2);
+		if(havereadlogs==2) {
+			SharedPreferences.Editor editor = sp.edit();
+			editor.putInt("havereadlogs", 1);
+			editor.commit();
+
+			AlertDialog.Builder dialog2 = new AlertDialog.Builder(MainActivity.this);
+			dialog2.setTitle("发送日志");
+			dialog2.setMessage("为了帮助开发者更加方便地抓爬虫，在发生闪退时应用会自动发送您的日志。这可能会包括您手机的一些信息，如果您不想发送，也可以选择不允许。");
+			dialog2.setCancelable(false);
+			dialog2.setPositiveButton("明白了", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+			dialog2.setNegativeButton("👴不允许", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Toast.makeText(MainActivity.this, "将不会发送日志", Toast.LENGTH_SHORT).show();
+					PgyCrashManager.unregister();
+				}
+
+
+			});
+			dialog2.show();
+		}
 		//使用toolbar顶替原有action bar
-		android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+		androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 		//状态栏沉浸，使用特殊方法适配各类定制ui
 		StatusBarUtil.setRootViewFitsSystemWindows(this,true);
 		StatusBarUtil.setTranslucentStatus(this);
@@ -38,50 +83,15 @@ public class MainActivity extends AppCompatActivity
 			dialog.setMessage("应用检测到你没有授予基本的权限。如果没有授予权限，将不能读取相关信息。");
 			dialog.setCancelable(false);
 			dialog.setPositiveButton("明白了，授予", new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog,int which)
-					{
-						ActivityCompat.requestPermissions(MainActivity.this,new 
-														  String[] {Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE},1);
-					}
-				});
-			dialog.setNegativeButton("👴就是不给", new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog,int which)
-					{
-						Toast.makeText(MainActivity.this,"(눈_눈)",Toast.LENGTH_SHORT).show();
-
-					}
-
-
-				});
-			dialog.show();
-		}
-		//检查root权限
-		//读取sharedpreference来查看是否显示过对话框
-		final SharedPreferences sp=this.getPreferences(MODE_PRIVATE);
-		int havegrantroot =sp.getInt("havegrantroot",2);
-		if (havegrantroot == 2)
-		{
-		android.app.AlertDialog.Builder dialog1=new android.app.AlertDialog.Builder(MainActivity.this);
-		dialog1.setTitle("root须知");
-		dialog1.setMessage("本应用需要root权限来与系统内核进行交互，以获得相对准确的电池实际容量值，若不授予将无法读取。此对话框仅显示一次。");
-		dialog1.setCancelable(false);
-		dialog1.setPositiveButton("明白了，授予", new DialogInterface.OnClickListener()
 			{
 				@Override
 				public void onClick(DialogInterface dialog,int which)
 				{
-					ShellUtils.checkRootPermission();
-					
-					SharedPreferences.Editor editor=sp.edit();
-					editor.putInt("havegrantroot",1);
-					editor.commit();
+					ActivityCompat.requestPermissions(MainActivity.this,new
+							String[] {Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
 				}
 			});
-		dialog1.setNegativeButton("👴就是不给", new DialogInterface.OnClickListener()
+			dialog.setNegativeButton("👴就是不给", new DialogInterface.OnClickListener()
 			{
 				@Override
 				public void onClick(DialogInterface dialog,int which)
@@ -92,54 +102,103 @@ public class MainActivity extends AppCompatActivity
 
 
 			});
-		dialog1.show();
+			dialog.show();
 		}
-		
-	   	
-    }
+		//判断是不是coloros，来使用root权限
+       if (OSUtils.isOppo() == true)
+    {
+	android.app.AlertDialog.Builder dialog=new android.app.AlertDialog.Builder(MainActivity.this);
+	dialog.setTitle("ColorOS特别说明");
+	dialog.setMessage("检测到设备的系统为ColorOS，由于ColorOS的限制，读取电池信息必须授予root权限。请在授予后继续。");
+	dialog.setCancelable(false);
+	dialog.setPositiveButton("明白了，授予", new DialogInterface.OnClickListener()
+	{
+		@Override
+		public void onClick(DialogInterface dialog,int which)
+		{
+			ShellUtils.checkRootPermission();
+			useroot = true ;
+		}
+	});
+	dialog.setNegativeButton("退出", new DialogInterface.OnClickListener()
+	{
+		@Override
+		public void onClick(DialogInterface dialog,int which)
+		{
+			finish();
+
+		}
+
+
+	});
+	dialog.show();
+}
+
+
+	}
+
 	//重写菜单初始化方法
 	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //load the file of menu that you created
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-    //重写菜单选项被点击方法
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.about) {
-            android.app.AlertDialog.Builder dialog=new android.app.AlertDialog.Builder(MainActivity.this);
+	public boolean onCreateOptionsMenu(Menu menu) {
+		//load the file of menu that you created
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	//重写菜单选项被点击方法
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.about) {
+			android.app.AlertDialog.Builder dialog=new android.app.AlertDialog.Builder(MainActivity.this);
 			dialog.setTitle("关于");
 			dialog.setMessage("作者：酷安@Genisys\n一个很简单的app，数据仅供参考。");
 			dialog.setCancelable(true);
 			dialog.setPositiveButton("不认识", new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog,int which)
 				{
-					@Override
-					public void onClick(DialogInterface dialog,int which)
-					{
-						
 
-						
-					}
-				});
+
+
+				}
+			});
 			dialog.show();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-		
-    }
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
 
 	//刷新电池信息方法
 	public void refresh(View view)
 	{
 		TextView refreshview = findViewById(R.id.textfresh);
 		refreshview.setText("手动刷新电池信息(慢)");
-		refreshrate();
-		mHandler.postDelayed(runnable, 1000);
-		
+		//初始化电池信息，需要捕捉异常
+		try  {
+			refreshrate();
+		} catch (Exception e) {
+			PgyCrashManager.reportCaughtException(e);
+			e.printStackTrace();
+			Toast.makeText(MainActivity.this,"读取时发生错误",Toast.LENGTH_SHORT).show();
+		}
+		//定时刷新，需要捕捉异常
+		try  {
+			mHandler.postDelayed(runnable, 1000);
+		} catch (Exception e) {
+			PgyCrashManager.reportCaughtException(e);
+			e.printStackTrace();
+			Toast.makeText(MainActivity.this,"读取时发生错误",Toast.LENGTH_SHORT).show();
+		}
+
+
 	}
+	//每秒刷新
+	private Handler mHandler = new Handler();
+
 	public void refreshrate()
 	{
 		//更改标题
@@ -158,7 +217,7 @@ public class MainActivity extends AppCompatActivity
 		//电池实际容量
 		TextView battfcc = findViewById(R.id.battfcc);
 		String getbatt = "cat /sys/class/power_supply/battery/batt_fcc";
-		ShellUtils.CommandResult cmd = ShellUtils.execCommand(getbatt,true,true);
+		ShellUtils.CommandResult cmd = ShellUtils.execCommand(getbatt,useroot,true);
 		if (cmd.result == 0)
 		{
 			double battccdou = Double.parseDouble((BatteryInfo.getBatteryCapacity(this)));
@@ -169,14 +228,14 @@ public class MainActivity extends AppCompatActivity
 			battfcc.setText(cmd.successMsg + ".0" + "（" + healthrate + "）");
 		}
 		else
-	    {
+		{
 			battfcc.setText("读取失败");
 		}
 
 		//电池健康状况
 		TextView batthealth = findViewById(R.id.battstate);
 		String battstate = "cat /sys/class/power_supply/battery/health";
-		ShellUtils.CommandResult cmdstate = ShellUtils.execCommand(battstate,true,true);
+		ShellUtils.CommandResult cmdstate = ShellUtils.execCommand(battstate,useroot,true);
 		if (cmdstate.result == 0)
 		{
 			if (cmdstate.successMsg.equals("Good"))
@@ -189,14 +248,14 @@ public class MainActivity extends AppCompatActivity
 			}
 		}
 		else
-	    {
+		{
 			battfcc.setText("读取失败");
 		}
 
 		//电池技术
 		TextView batttech = findViewById(R.id.batttech);
 		String batttechnology = "cat /sys/class/power_supply/battery/technology";
-		ShellUtils.CommandResult cmdtech = ShellUtils.execCommand(batttechnology,true,true);
+		ShellUtils.CommandResult cmdtech = ShellUtils.execCommand(batttechnology,useroot,true);
 		if (cmdtech.result == 0 )
 		{
 			batttech.setText(cmdtech.successMsg);
@@ -209,7 +268,7 @@ public class MainActivity extends AppCompatActivity
 		//充电类型
 		TextView chargetp = findViewById(R.id.chargetype);
 		String chargetyp = "cat /sys/class/power_supply/battery/charge_type";
-		ShellUtils.CommandResult cmdchtyp = ShellUtils.execCommand(chargetyp,true,true);
+		ShellUtils.CommandResult cmdchtyp = ShellUtils.execCommand(chargetyp,useroot,true);
 		if (cmdchtyp.result == 0 )
 		{
 			chargetp.setText(cmdchtyp.successMsg);
@@ -220,9 +279,9 @@ public class MainActivity extends AppCompatActivity
 		}
 
 		//当前电压
-	    TextView voltp = findViewById(R.id.voltnow);
+		TextView voltp = findViewById(R.id.voltnow);
 		String volt1 = "cat /sys/class/power_supply/battery/voltage_now";
-		ShellUtils.CommandResult cmdvolt1 = ShellUtils.execCommand(volt1,true,true);
+		ShellUtils.CommandResult cmdvolt1 = ShellUtils.execCommand(volt1,useroot,true);
 		if (cmdvolt1.result == 0 )
 		{
 			voltp.setText(cmdvolt1.successMsg + "uV");
@@ -235,7 +294,7 @@ public class MainActivity extends AppCompatActivity
 		//最高电压
 		TextView voltma = findViewById(R.id.voltmax);
 		String volt2 = "cat /sys/class/power_supply/battery/voltage_max";
-		ShellUtils.CommandResult cmdvolt2 = ShellUtils.execCommand(volt2,true,true);
+		ShellUtils.CommandResult cmdvolt2 = ShellUtils.execCommand(volt2,useroot,true);
 		if (cmdvolt2.result == 0 )
 		{
 			voltma.setText(cmdvolt2.successMsg + "uV");
@@ -248,7 +307,7 @@ public class MainActivity extends AppCompatActivity
 		//最低电压
 		TextView voltmi = findViewById(R.id.voltmin);
 		String volt3 = "cat /sys/class/power_supply/battery/voltage_min";
-		ShellUtils.CommandResult cmdvolt3 = ShellUtils.execCommand(volt3,true,true);
+		ShellUtils.CommandResult cmdvolt3 = ShellUtils.execCommand(volt3,useroot,true);
 		if (cmdvolt3.result == 0 )
 		{
 			voltmi.setText(cmdvolt3.successMsg + "uV");
@@ -261,7 +320,7 @@ public class MainActivity extends AppCompatActivity
 		//充电状态
 		TextView charstat =findViewById(R.id.charstatus);
 		String charge = "cat /sys/class/power_supply/battery/status";
-		ShellUtils.CommandResult cmdchar = ShellUtils.execCommand(charge,true,true);
+		ShellUtils.CommandResult cmdchar = ShellUtils.execCommand(charge,useroot,true);
 		if (cmdchar.result == 0 )
 		{
 			if (cmdchar.successMsg.equals("Not charging"))
@@ -281,7 +340,7 @@ public class MainActivity extends AppCompatActivity
 		//适配器固件更新
 		TextView adapter = findViewById(R.id.adapter);
 		String adapt = "cat /sys/class/power_supply/battery/adapter_fw_update";
-		ShellUtils.CommandResult cmdadap = ShellUtils.execCommand(adapt,true,true);
+		ShellUtils.CommandResult cmdadap = ShellUtils.execCommand(adapt,useroot,true);
 		if (cmdadap.result == 0 )
 		{
 			if (cmdadap.successMsg.equals("0"))
@@ -301,7 +360,7 @@ public class MainActivity extends AppCompatActivity
 		//是否支持阶梯式充电
 		TextView stepchar = findViewById(R.id.step);
 		String step = "cat /sys/class/power_supply/battery/step_charging_enabled";
-		ShellUtils.CommandResult cmdstep = ShellUtils.execCommand(step,true,true);
+		ShellUtils.CommandResult cmdstep = ShellUtils.execCommand(step,useroot,true);
 		if (cmdstep.result == 0 )
 		{
 			if (cmdstep.successMsg.equals("0"))
@@ -321,7 +380,7 @@ public class MainActivity extends AppCompatActivity
 		//vooc识别
 		TextView vooctext = findViewById(R.id.voocstat);
 		String vooc = "cat /sys/class/power_supply/battery/voocchg_ing";
-		ShellUtils.CommandResult cmdvooc = ShellUtils.execCommand(vooc,true,true);
+		ShellUtils.CommandResult cmdvooc = ShellUtils.execCommand(vooc,useroot,true);
 		if (cmdvooc.result == 0 )
 		{
 			if (cmdvooc.successMsg.equals("0"))
@@ -341,7 +400,7 @@ public class MainActivity extends AppCompatActivity
 		//当前电流
 		TextView currentnowview = findViewById(R.id.currentnow);
 		String currenttext = "cat /sys/class/power_supply/battery/current_now";
-		ShellUtils.CommandResult cmdcurrentnow = ShellUtils.execCommand(currenttext,true,true);
+		ShellUtils.CommandResult cmdcurrentnow = ShellUtils.execCommand(currenttext,useroot,true);
 		if (cmdcurrentnow.result == 0)
 		{
 			if (Integer.parseInt(cmdcurrentnow.successMsg) > 0 )
@@ -367,14 +426,14 @@ public class MainActivity extends AppCompatActivity
 		//充电器电压
 		TextView voltadapview = findViewById(R.id.voltadapnow);
 		String voltadapnow = "cat /sys/class/power_supply/usb/voltage_now";
-		ShellUtils.CommandResult cmdadapvolt = ShellUtils.execCommand(voltadapnow,true,true);
+		ShellUtils.CommandResult cmdadapvolt = ShellUtils.execCommand(voltadapnow,useroot,true);
 		if (cmdadapvolt.result == 0 )
 		{
 			if (cmdadapvolt.successMsg.equals("0"))
 			{
 				voltadapview.setText("没有连接充电器");
 			}
-			else 
+			else
 			{
 				voltadapview.setText(cmdadapvolt.successMsg + "uV");
 			}
@@ -392,26 +451,16 @@ public class MainActivity extends AppCompatActivity
 			powernowview.setText("当前不在充电");
 		}
 		else
-	    {
+		{
 			//处理电压数据
 			Double voltnow = Double.parseDouble(cmdadapvolt.successMsg);
-			int volt = (int) Math.ceil(voltnow/1000000);
+			int volt = (int) Math.rint(voltnow/1000000);
 			//处理电流数据
 			Double currentnow =  Double.parseDouble(cmdcurrentnow.successMsg);
-			int current = (int) Math.floor(currentnow/1000);
+			int current = (int) Math.rint(currentnow/1000);
 			//获得功率
 			int power = volt * current * -1;
 			powernowview.setText(power + "W" );
 		}
 	}
-	//每秒刷新
-	private Handler mHandler = new Handler();
-	Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            //要做的事情
-			refreshrate();
-            mHandler.postDelayed(this, 1000);
-        }
-    };
 }

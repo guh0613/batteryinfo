@@ -1,5 +1,6 @@
-package com.genisys.batteryinfo;
-import android.content.*;
+package com.genisys.batteryinformation;
+
+import android.content.Context;
 
 public class BatteryInfo {
 

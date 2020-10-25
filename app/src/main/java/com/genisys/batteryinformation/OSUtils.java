@@ -1,8 +1,11 @@
-package com.genisys.batteryinfo;
+package com.genisys.batteryinformation;
 
-import android.os.*;
-import android.text.*;
-import java.io.*;
+import android.os.Build;
+import android.text.TextUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class OSUtils {
 

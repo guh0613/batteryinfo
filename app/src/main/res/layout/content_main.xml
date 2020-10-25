@@ -6,7 +6,7 @@
 	android:layout_height="match_parent"
 	android:gravity="center">
 
-	<android.support.v7.widget.CardView
+	<androidx.cardview.widget.CardView
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/cardwelcome"
 		android:layout_width="match_parent"
@@ -24,8 +24,8 @@
 			android:layout_width="wrap_content"
 			android:textStyle="bold"/>
 
-	</android.support.v7.widget.CardView>
-	<android.support.v7.widget.CardView
+	</androidx.cardview.widget.CardView>
+	<androidx.cardview.widget.CardView
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/cardbattinfo"
 		android:layout_width="match_parent"
@@ -279,9 +279,9 @@
 					android:layout_width="wrap_content"/>
 			</LinearLayout>
 		</LinearLayout>
-	</android.support.v7.widget.CardView>
+	</androidx.cardview.widget.CardView>
 	
-	<android.support.v7.widget.CardView
+	<androidx.cardview.widget.CardView
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/cardhelp"
 		android:layout_width="match_parent"
@@ -297,9 +297,9 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"/>
 
-	</android.support.v7.widget.CardView>
+	</androidx.cardview.widget.CardView>
 	
-	<android.support.v7.widget.CardView
+	<androidx.cardview.widget.CardView
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/cardrefresh"
 		android:layout_width="match_parent"
@@ -321,7 +321,7 @@
 			android:layout_width="wrap_content"
 			android:textStyle="bold"/>
 
-	</android.support.v7.widget.CardView>
+	</androidx.cardview.widget.CardView>
 
 </LinearLayout>
 
