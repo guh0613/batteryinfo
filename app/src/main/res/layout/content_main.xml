@@ -241,7 +241,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 				<TextView
-					android:text="计算得出的实际容量(mah)："
+					android:text="实际容量理论最低值(mah)："
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content" />
 				<TextView
@@ -293,7 +293,7 @@
 
 		<TextView
 			android:layout_gravity="center"
-			android:text="工作原理：\n通过读取oppo内置在内核的电池信息计算器计算得出。由于运算在内核进行，因此无需保留本app的后台，也可查询数据。每次刷写内核后，这些数据将会被重置。这些数据会在每一次充电完成后计算得出，所以请在充电完成后使用本app以获得最新数据。"
+			android:text="工作原理：\n通过读取fcc得出。由于运算在内核进行，因此无需保留本app的后台，也可查询数据。请注意，每次完全充放电和刷写内核后，数据都会被重置。"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"/>
 
